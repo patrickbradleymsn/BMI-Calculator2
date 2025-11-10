@@ -1,4 +1,5 @@
 import streamlit as st
+import math
 
 # -----------------------------
 # Helpers
@@ -88,6 +89,15 @@ st.markdown(
       }
       .pill { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 999px; font-weight:600; }
       .footer { color:#6b7280; font-size: 0.85rem; }
+      .gauge { display:flex; height:16px; border-radius:999px; overflow:hidden; border:1px solid #e5e7eb; }
+      .seg { flex:1; }
+      .seg.u { background:#60a5fa55; }
+      .seg.n { background:#34d39955; }
+      .seg.o { background:#f59e0b55; }
+      .seg.b { background:#ef444455; }
+      .marker { position:relative; height:0; }
+      .pin { position:absolute; top:-6px; width:2px; height:28px; background:#111827; border-radius:2px; }
+      .ticks { display:flex; justify-content:space-between; font-size:12px; color:#6b7280; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -128,23 +138,29 @@ if st.button("Calculate BMI 🎯", use_container_width=True):
         unsafe_allow_html=True,
     )
 
-    # Gauge-like bar using matplotlib
-    fig, ax = plt.subplots(figsize=(6, 1.4))
-    ax.set_xlim(10, 40)
-    ax.set_ylim(0, 1)
-
-    # segments
-    ax.axvspan(10, 18.5, color="#60a5fa", alpha=0.35)
-    ax.axvspan(18.5, 25, color="#34d399", alpha=0.35)
-    ax.axvspan(25, 30, color="#f59e0b", alpha=0.35)
-    ax.axvspan(30, 40, color="#ef4444", alpha=0.35)
-
-    ax.axvline(bmi, 0, 1, linewidth=3)
-
-    ax.set_yticks([])
-    ax.set_xticks([10, 18.5, 25, 30, 40])
-    ax.set_xlabel("BMI")
-    st.pyplot(fig, use_container_width=True)
+    # --- HTML/CSS gauge (no matplotlib) ---
+    # normalize to 10–40
+    norm = min(max((bmi - 10) / 30, 0), 1)
+    st.markdown(
+        """
+        <div class='gauge'>
+          <div class='seg u' style='flex:8.5'></div>
+          <div class='seg n' style='flex:6.5'></div>
+          <div class='seg o' style='flex:5'></div>
+          <div class='seg b' style='flex:10'></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.progress(norm)
+    st.markdown(
+        """
+        <div class='ticks'>
+           <span>10</span><span>18.5</span><span>25</span><span>30</span><span>40</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # Healthy weight bounds for this height
     st.markdown(
