@@ -10,7 +10,7 @@ CATEGORY_BOUNDS = [
     (0, 18.5, "Underweight", "#60a5fa", "🪁"),
     (18.5, 25, "Normal weight", "#34d399", "🥑"),
     (25, 30, "Overweight", "#f59e0b", "🍯"),
-    (30, math.inf, "Obesity", "#ef4444", "🍰"),
+    (30, float('inf'), "Obesity", "#ef4444", "🍰"),
 ]
 
 def to_metric(feet: int, inches: int, lbs: float):
